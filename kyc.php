@@ -117,7 +117,7 @@ if (isset($_POST["cc"]) && isset($_POST["vatnum"]) && isset($_POST["webid"])) {
 <?php
     echo "<p>Your request to join has been approved. ";
     echo "Now please go to the settings in your bookkeeping system (e.g. the PeppolNext app in your Nextcloud server)";
-    echo "and set your AS4-to-Peppol gateway to:</p> <pre>https://connectyourbooks.com</pre>";
+    echo "and set your AS4-to-Peppol gateway to:</p> <pre>http://fwd.connectyourbooks.com</pre>";
 
     echo "<h2>Your details:</h2>";
     echo "<p><strong>Name:</strong> $result->name</td></tr>";
