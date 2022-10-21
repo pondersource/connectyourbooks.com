@@ -13,8 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   }
   error_log("[CONTENT-TYPE] $contentType");
   $body = file_get_contents('php://input');
-  error_log("[BODY] $body");
+  error_log("[REQUEST BODY LENGTH] " . strlen($body));
   $response = $as4->handleAs4($contentType, $body);
+  error_log("[RESPONSE BODY LENGTH] " . strlen($response));
   header('Referrer-Policy: strict-origin-when-cross-origin');
   header('X-Frame-Options: SAMEORIGIN');
   header('X-Content-Type-Options: nosniff');
