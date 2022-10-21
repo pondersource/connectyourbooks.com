@@ -56,8 +56,7 @@
   ];
   $selected = (isset($_POST["cc"]) ? $_POST["cc"] : "NL" );
   $vatnum = (isset($_POST["vatnum"]) ? $_POST["vatnum"] : "862637223B01" );
-  $server = (isset($_POST["server"]) ? $_POST["server"] : "https://cloud.pondersource.org" );
-  $path = (isset($_POST["path"]) ? $_POST["path"] : "/index.php/apps/peppolnext/cert" );
+  $webid = (isset($_POST["webid"]) ? $_POST["webid"] : "pondersource.com/id" );
   foreach($countries as $cc => $countryName) {
     echo "          <option value=\"$cc\" " .
      ($cc == $selected ? "selected" : "" ) .
@@ -71,12 +70,8 @@
         <input type="text" name="vatnum" value="<?php  echo $vatnum; ?>"/>
       </div>
       <div>
-        <label for="server">Enter the URL of your bookkeeping server:</label>
-        <input type="text" name="server" style="width:50em;" value="<?php  echo $server; ?>"/>
-      </div>
-      <div>
-        <label for="path">Enter your server's cert path:</label>
-        <input type="text" name="path" style="width:50em;" value="<?php  echo $path; ?>"/>
+        <label for="server">Enter your WebID:</label>
+        <input type="text" name="webid" style="width:50em;" value="<?php  echo $webid; ?>"/>
       </div>
       <div>
         <input type="submit" value="Check" />
@@ -94,25 +89,27 @@ if (isset($_POST["cc"]) && isset($_POST["vatnum"])) {
     echo "<p>Name: '$result->name'</p>";
     echo "<p>Address: '$result->address'</p>";
   
-    $certUrl = $server . $path;
     $client = new \GuzzleHttp\Client();
-    $response = $client->request('GET', $certUrl);
+    if (!str_starts_with($webid, "http")) {
+      $webid = "https://" + $webid;
+    }
+    $response = $client->request('GET', $webid);
   
     $statusCode = $response->getStatusCode();
     //echo $res->getHeader('content-type')[0];
     $responseBody = (string) $response->getBody();
     if($statusCode == 200) {
       if(strlen($responseBody) == 0) {
-        echo "Received empty response body from $server$path.";
+        echo "Received empty response body from $webid.";
       } else {
         $cert = new X509;
         $cert->loadX509($responseBody);
-        echo "<p>Found cert at $server$path</p>";
-        // echo "<p>$responseBody</p>";
-        echo "<pre>".$cert->getPublicKey()."</pre>";
+        echo "<p>Found cert at $webid</p>";
+        echo "<p>$responseBody</p>";
+        // echo "<pre>".$cert->getPublicKey()."</pre>";
       }
     } else {
-      echo "Attempt to retrieve cert from $server$path resulted in a $statusCode response code.";
+      echo "Attempt to retrieve cert from $webid resulted in a $statusCode response code.";
     }
   
     echo "<p>Welcome! Your request to join has been approved.</p>";
